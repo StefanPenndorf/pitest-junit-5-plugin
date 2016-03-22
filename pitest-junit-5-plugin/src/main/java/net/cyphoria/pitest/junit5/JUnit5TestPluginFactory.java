@@ -33,7 +33,6 @@ import java.util.Collections;
 public class JUnit5TestPluginFactory implements TestPluginFactory {
     @Override
     public Configuration createTestFrameworkConfiguration(TestGroupConfig testGroupConfig, ClassByteArraySource classByteArraySource) {
-//         throw new RuntimeException("Igor was here");
         return new Configuration() {
             @Override
             public TestUnitFinder testUnitFinder() {

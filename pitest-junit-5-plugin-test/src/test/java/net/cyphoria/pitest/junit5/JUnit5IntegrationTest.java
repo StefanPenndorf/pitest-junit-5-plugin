@@ -59,6 +59,9 @@ class JUnit5IntegrationTest {
         prepare("/simple");
 
         verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+
+        verifier.verifyTextInLog("Ran 1 tests");
+        verifier.verifyTextInLog("Generated 1 mutations Killed 1");
     }
 
 

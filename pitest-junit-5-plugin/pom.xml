@@ -60,6 +60,10 @@
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
+                        <manifestEntries>
+                            <Implementation-Vendor>${project.groupId}</Implementation-Vendor>
+                            <Implementation-Title>${project.artifactId}</Implementation-Title>
+                        </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
