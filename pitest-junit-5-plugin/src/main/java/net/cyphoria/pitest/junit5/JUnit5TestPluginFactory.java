@@ -14,60 +14,36 @@
  */
 package net.cyphoria.pitest.junit5;
 
+import org.junit.gen5.launcher.main.LauncherFactory;
 import org.pitest.classinfo.ClassByteArraySource;
-import org.pitest.classinfo.ClassInfo;
-import org.pitest.functional.Option;
+import org.pitest.classinfo.ClassName;
+import org.pitest.classinfo.Repository;
+import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.testapi.Configuration;
-import org.pitest.testapi.TestClassIdentifier;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestPluginFactory;
-import org.pitest.testapi.TestSuiteFinder;
-import org.pitest.testapi.TestUnitFinder;
-
-import java.util.Collections;
 
 /**
  * @author Stefan Pennndorf
  */
 public class JUnit5TestPluginFactory implements TestPluginFactory {
+
+
     @Override
-    public Configuration createTestFrameworkConfiguration(TestGroupConfig testGroupConfig, ClassByteArraySource classByteArraySource) {
-        return new Configuration() {
-            @Override
-            public TestUnitFinder testUnitFinder() {
-                return aClass -> Collections.emptyList();
-            }
+    public Configuration createTestFrameworkConfiguration(TestGroupConfig testGroupConfig, ClassByteArraySource source) {
+        final Repository classRepository = new Repository(source);
 
-            @Override
-            public TestSuiteFinder testSuiteFinder() {
-                return aClass -> Collections.emptyList();
-            }
+        if (classRepository.fetchClass(ClassName.fromString("org.junit.gen5.api.Test")).hasNone()) {
+            throw new PitHelpError(Help.NO_TEST_LIBRARY);
+        }
 
-            @Override
-            public TestClassIdentifier testClassIdentifier() {
-                return new TestClassIdentifier() {
-                    @Override
-                    public boolean isATestClass(ClassInfo classInfo) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean isIncluded(ClassInfo classInfo) {
-                        return false;
-                    }
-                };
-            }
-
-            @Override
-            public Option<PitHelpError> verifyEnvironment() {
-                return Option.none();
-            }
-        };
+        return new JUnit5Configuration(LauncherFactory.create());
     }
 
     @Override
     public String description() {
         return "A Test Discovery Plugin for JUnit 5";
     }
+
 }
