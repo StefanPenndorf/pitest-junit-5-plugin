@@ -15,6 +15,7 @@
 package net.cyphoria.pitest.junit5;
 
 import org.junit.gen5.api.BeforeEach;
+import org.junit.gen5.api.Disabled;
 import org.junit.gen5.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -72,6 +73,7 @@ class JUnit5TestPluginFactoryTest {
     }
 
     @Test
+    @Disabled
     void shouldThrowPitErrorWhenNoJunit5OnClassPath() {
         final PitHelpError error = expectThrows(
                 PitHelpError.class,

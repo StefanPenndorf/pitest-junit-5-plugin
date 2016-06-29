@@ -14,7 +14,6 @@
  */
 package net.cyphoria.pitest.junit5;
 
-import org.junit.gen5.launcher.main.LauncherFactory;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.Repository;
@@ -34,11 +33,12 @@ public class JUnit5TestPluginFactory implements TestPluginFactory {
     public Configuration createTestFrameworkConfiguration(TestGroupConfig testGroupConfig, ClassByteArraySource source) {
         final Repository classRepository = new Repository(source);
 
-        if (classRepository.fetchClass(ClassName.fromString("org.junit.gen5.api.Test")).hasNone()) {
-            throw new PitHelpError(Help.NO_TEST_LIBRARY);
+        final ClassName name = ClassName.fromString("org.junit.gen5.api.Test");
+        if (classRepository.fetchClass(name).hasNone()) {
+            throw new PitHelpError(Help.UNKNOWN_MUTATOR, name.toString());
         }
 
-        return new JUnit5Configuration(LauncherFactory.create());
+        return new JUnit5Configuration();
     }
 
     @Override

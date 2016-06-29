@@ -35,22 +35,30 @@
         <dependency>
             <groupId>org.pitest</groupId>
             <artifactId>pitest</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.junit</groupId>
             <artifactId>junit5-api</artifactId>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit</groupId>
             <artifactId>junit-launcher</artifactId>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.junit</groupId>-->
+            <!--<artifactId>junit-engine-api</artifactId>-->
+        <!--</dependency>-->
+
+
 
 
         <!-- Test only dependencies -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
@@ -83,6 +91,56 @@
                         </manifestEntries>
                     </archive>
                 </configuration>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+
+                            <artifactSet>
+                                <includes>
+                                    <include>org.junit:*</include>
+                                </includes>
+                            </artifactSet>
+
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                            </transformers>
+
+                            <relocations>
+                                <relocation>
+                                    <pattern>org.junit.gen5.launcher</pattern>
+                                    <shadedPattern>net.cyphoria.reloc.junit.launcher</shadedPattern>
+                                </relocation>
+                                <!--<relocation>-->
+                                    <!--<pattern>org.junit.gen5.engine</pattern>-->
+                                    <!--<shadedPattern>net.cyphoria.reloc.junit.engine</shadedPattern>-->
+                                <!--</relocation>-->
+                                <!--<relocation>-->
+                                    <!--<pattern>org.junit.gen5.commons</pattern>-->
+                                    <!--<shadedPattern>net.cyphoria.reloc.junit.commons</shadedPattern>-->
+                                <!--</relocation>-->
+                                <!--<relocation>-->
+                                    <!--<pattern>org.junit.gen5.launcher</pattern>-->
+                                    <!--<shadedPattern>net.cyphoria.reloc.junit.launcher</shadedPattern>-->
+                                <!--</relocation>-->
+                                <!--<relocation>-->
+                                    <!--<pattern>org.opentest4j</pattern>-->
+                                    <!--<shadedPattern>net.cyphoria.reloc.opentest4j</shadedPattern>-->
+                                <!--</relocation>-->
+                            </relocations>
+                        </configuration>
+                    </execution>
+                </executions>
+
             </plugin>
         </plugins>
     </build>

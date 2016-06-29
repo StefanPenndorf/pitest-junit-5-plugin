@@ -18,7 +18,6 @@ import org.junit.gen5.api.BeforeAll;
 import org.junit.gen5.api.BeforeEach;
 import org.junit.gen5.api.Disabled;
 import org.junit.gen5.api.Test;
-import org.junit.gen5.launcher.main.LauncherFactory;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.TestUnitFinder;
@@ -91,7 +90,7 @@ class JUnit5ConfigurationTest {
 
     @BeforeEach
     void setup() {
-        configuration = new JUnit5Configuration(LauncherFactory.create());
+        configuration = new JUnit5Configuration();
         testUnitFinder = configuration.testUnitFinder();
     }
 

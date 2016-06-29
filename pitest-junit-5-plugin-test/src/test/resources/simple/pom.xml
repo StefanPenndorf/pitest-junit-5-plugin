@@ -29,7 +29,7 @@
         </dependency>
         <dependency>
             <groupId>org.junit</groupId>
-            <artifactId>junit-launcher</artifactId>
+            <artifactId>junit5-engine</artifactId>
             <version>${junit.version}</version>
         </dependency>
     </dependencies>

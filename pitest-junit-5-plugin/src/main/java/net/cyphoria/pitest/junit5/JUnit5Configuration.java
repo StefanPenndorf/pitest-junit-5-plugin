@@ -14,20 +14,17 @@
  */
 package net.cyphoria.pitest.junit5;
 
-import org.junit.gen5.engine.support.descriptor.JavaSource;
 import org.junit.gen5.launcher.Launcher;
 import org.junit.gen5.launcher.TestDiscoveryRequest;
 import org.junit.gen5.launcher.TestIdentifier;
 import org.junit.gen5.launcher.TestPlan;
+import org.junit.gen5.launcher.main.LauncherFactory;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.functional.Option;
 import org.pitest.help.PitHelpError;
 import org.pitest.testapi.Configuration;
-import org.pitest.testapi.Description;
-import org.pitest.testapi.ResultCollector;
 import org.pitest.testapi.TestClassIdentifier;
 import org.pitest.testapi.TestSuiteFinder;
-import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.TestUnitFinder;
 
 import java.util.Collection;
@@ -42,15 +39,13 @@ import static org.junit.gen5.launcher.main.TestDiscoveryRequestBuilder.request;
  */
 public class JUnit5Configuration implements Configuration {
 
-    private final Launcher launcher;
-
-    public JUnit5Configuration(Launcher launcher) {
-        this.launcher = launcher;
+    public JUnit5Configuration() {
     }
 
 
     @Override
     public TestUnitFinder testUnitFinder() {
+        final Launcher launcher = LauncherFactory.create();
         return testClass -> {
             TestDiscoveryRequest discoveryRequest = request().select(forClass(testClass)).build();
             final TestPlan testPlan = launcher.discover(discoveryRequest);
@@ -75,7 +70,7 @@ public class JUnit5Configuration implements Configuration {
         return new TestClassIdentifier() {
             @Override
             public boolean isATestClass(ClassInfo classInfo) {
-                return true;
+                return classInfo.getName().asJavaName().endsWith("Test");
             }
 
             @Override
@@ -90,33 +85,4 @@ public class JUnit5Configuration implements Configuration {
         return Option.none();
     }
 
-    private static class JUnit5TestUnit implements TestUnit {
-        private final TestIdentifier testIdentifier;
-
-        public JUnit5TestUnit(TestIdentifier testIdentifier) {
-            this.testIdentifier = testIdentifier;
-
-        }
-
-        @Override
-        public void execute(ClassLoader loader, ResultCollector rc) {
-
-        }
-
-        @Override
-        public Description getDescription() {
-            final String displayName = testIdentifier.getDisplayName();
-            final Class<?> testClass = inferTestClassFromSource(testIdentifier);
-            return new Description(displayName, testClass);
-        }
-
-        private Class inferTestClassFromSource(TestIdentifier testIdentifier) {
-            return testIdentifier.getSource()
-                    .filter(s -> JavaSource.class.isAssignableFrom(s.getClass()))
-                    .map(JavaSource.class::cast)
-                    .flatMap(JavaSource::getJavaClass)
-                    .orElse(null);
-
-        }
-    }
 }
