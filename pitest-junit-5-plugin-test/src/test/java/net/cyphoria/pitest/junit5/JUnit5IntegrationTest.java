@@ -58,10 +58,24 @@ class JUnit5IntegrationTest {
     void mutatestSimpleCodeEndExecutesTest() throws IOException, VerificationException {
         prepare("/simple");
 
+        verifier.executeGoal("test");
         verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
 
-        verifier.verifyTextInLog("Ran 1 tests");
-        verifier.verifyTextInLog("Generated 1 mutations Killed 1");
+
+        verifier.verifyTextInLog("Generated 4 mutations Killed 2");
+
+
+        // At most we ought to run 8 tests (possibly less not looked at what the tests are doing)
+        verifier.verifyTextInLog("Ran 8 tests");
+
+        // This is what we actually observe
+        // verifier.verifyTextInLog("Ran 9 tests");
+        
+        // Investigation needed here. 
+        // Two possible explainations for the observed behaviour
+        // 1. Something isn't quite right with the test targetting in pitest (unrelated to this plugin)
+        // 2. This plugin is detecting more than 2 tests in the ProductionCodeTest test class.
+         
     }
 
 

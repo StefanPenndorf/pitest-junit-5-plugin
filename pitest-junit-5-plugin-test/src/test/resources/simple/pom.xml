@@ -66,9 +66,10 @@
                     </targetClasses>
                     <failWhenNoMutations>false</failWhenNoMutations>
                     <verbose>true</verbose>
-                    <jvmArgs>
+                    <!-- <jvmArgs>
                         <jvmArg>-agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=y</jvmArg>
                     </jvmArgs>
+                    -->
                 </configuration>
                 <dependencies>
                     <dependency>
