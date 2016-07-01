@@ -15,6 +15,8 @@
 package org.example;
 
 import org.junit.gen5.api.Test;
+import static org.junit.gen5.api.Assertions.*;
+
 
 /**
  *
