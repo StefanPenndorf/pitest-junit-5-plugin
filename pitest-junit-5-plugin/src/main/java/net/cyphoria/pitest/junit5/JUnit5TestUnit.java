@@ -14,14 +14,17 @@
  */
 package net.cyphoria.pitest.junit5;
 
-import org.junit.gen5.engine.TestExecutionResult;
-import org.junit.gen5.engine.support.descriptor.JavaSource;
-import org.junit.gen5.launcher.Launcher;
-import org.junit.gen5.launcher.TestDiscoveryRequest;
-import org.junit.gen5.launcher.TestExecutionListener;
-import org.junit.gen5.launcher.TestIdentifier;
-import org.junit.gen5.launcher.TestPlan;
-import org.junit.gen5.launcher.main.LauncherFactory;
+import org.junit.platform.engine.DiscoverySelector;
+import org.junit.platform.engine.TestExecutionResult;
+import org.junit.platform.engine.TestSource;
+import org.junit.platform.engine.support.descriptor.ClassSource;
+import org.junit.platform.engine.support.descriptor.MethodSource;
+import org.junit.platform.launcher.Launcher;
+import org.junit.platform.launcher.LauncherDiscoveryRequest;
+import org.junit.platform.launcher.TestExecutionListener;
+import org.junit.platform.launcher.TestIdentifier;
+import org.junit.platform.launcher.TestPlan;
+import org.junit.platform.launcher.core.LauncherFactory;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.testapi.TestUnit;
@@ -34,8 +37,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 
-import static org.junit.gen5.engine.discovery.UniqueIdSelector.forUniqueId;
-import static org.junit.gen5.launcher.main.TestDiscoveryRequestBuilder.request;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectUniqueId;
+import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.request;
 
 /**
  * @author Stefan Pennndorf
@@ -54,19 +57,17 @@ class JUnit5TestUnit implements TestUnit {
     @Override
     public void execute(ClassLoader loader, ResultCollector rc) {
         final Launcher launcher = LauncherFactory.create();
-        final String uniqueId = testIdentifier.getUniqueId().toString();
-        final TestDiscoveryRequest discoveryRequest = request().select(forUniqueId(uniqueId)).build();
+        final String uniqueId = testIdentifier.getUniqueId();
+        final LauncherDiscoveryRequest discoveryRequest = request().selectors((DiscoverySelector) selectUniqueId(uniqueId)).build();
         final TestPlan testPlan = launcher.discover(discoveryRequest);
         final Optional<? extends Class<?>> testClazz = testPlan.getRoots().stream()
                 .flatMap(t -> testPlan.getDescendants(t).stream())
                 .map(TestIdentifier::getSource)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .filter(s -> s instanceof JavaSource)
-                .map(s -> (JavaSource)s)
-                .map(JavaSource::getJavaClass)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+                .filter(s -> s instanceof ClassSource)
+                .map(s -> (ClassSource) s)
+                .map(ClassSource::getJavaClass)
                 .findFirst();
 
         final boolean isFromDifferentLoader = testClazz
@@ -105,7 +106,7 @@ class JUnit5TestUnit implements TestUnit {
         }
     }
 
-    private void executeInDifferentClassLoader(ClassLoader loader, ResultCollector rc, Launcher launcher, TestDiscoveryRequest discoveryRequest) {
+    private void executeInDifferentClassLoader(ClassLoader loader, ResultCollector rc, Launcher launcher, LauncherDiscoveryRequest discoveryRequest) {
         // must jump through hoops to run in different class loader
         // when even our framework classes may be duplicated
         // translate everything via strings
@@ -123,11 +124,9 @@ class JUnit5TestUnit implements TestUnit {
         }
     }
 
-    private void convertStringsToResults(final ResultCollector rc,
-                                         final List<String> q) {
+    private void convertStringsToResults(final ResultCollector rc, final List<String> q) {
         Events.applyEvents(q, rc, this.getDescription());
     }
-
 
     @Override
     public Description getDescription() {
@@ -138,10 +137,20 @@ class JUnit5TestUnit implements TestUnit {
 
     private Class inferTestClassFromSource(TestIdentifier testIdentifier) {
         return testIdentifier.getSource()
-                .filter(s -> JavaSource.class.isAssignableFrom(s.getClass()))
-                .map(JavaSource.class::cast)
-                .flatMap(JavaSource::getJavaClass)
+                .map(this::findClass)
                 .orElse(null);
+    }
 
+    private Class findClass(TestSource testSource) {
+        if (testSource instanceof ClassSource) {
+            return ((ClassSource) testSource).getJavaClass();
+        }
+        if (testSource instanceof MethodSource) {
+            try {
+                return Class.forName(((MethodSource) testSource).getClassName());
+            } catch (ClassNotFoundException e) {
+            }
+        }
+        return null;
     }
 }

@@ -14,9 +14,9 @@
  */
 package net.cyphoria.pitest.junit5;
 
-import org.junit.gen5.api.BeforeEach;
-import org.junit.gen5.api.Disabled;
-import org.junit.gen5.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassByteArraySource;
@@ -28,9 +28,11 @@ import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestUnitFinder;
 import org.pitest.util.IsolationUtils;
 
-import static org.junit.gen5.api.Assertions.assertEquals;
-import static org.junit.gen5.api.Assertions.assertFalse;
-import static org.junit.gen5.api.Assertions.expectThrows;
+import java.util.Collections;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 /**
@@ -50,16 +52,15 @@ class JUnit5TestPluginFactoryTest {
     private JUnit5TestPluginFactory factory;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.initMocks(this);
-        this.realSource = new ClassloaderByteArraySource(
-                IsolationUtils.getContextClassLoader());
+        this.realSource = new ClassloaderByteArraySource(IsolationUtils.getContextClassLoader());
 
         this.factory = new JUnit5TestPluginFactory();
 
         when(this.source.getBytes("org.junit.Test")).thenReturn(
                 Option.none());
-        when(this.source.getBytes("org.junit.gen5.api.Test")).thenReturn(
+        when(this.source.getBytes("org.junit.jupiter.api.Test")).thenReturn(
                 Option.none());
     }
 
@@ -67,7 +68,7 @@ class JUnit5TestPluginFactoryTest {
     void shouldCreateAConfigurationThatFindsJUnitTestsWhenJUnit5OnClassPath() {
         putJUnit5OnClasspath();
 
-        final TestUnitFinder finder = factory.createTestFrameworkConfiguration(groupConfig, source).testUnitFinder();
+        final TestUnitFinder finder = factory.createTestFrameworkConfiguration(groupConfig, source, Collections.emptyList()).testUnitFinder();
 
         assertFalse(finder.findTestUnits(JUnit5TestPluginFactoryTest.class).isEmpty());
     }
@@ -75,9 +76,9 @@ class JUnit5TestPluginFactoryTest {
     @Test
     @Disabled
     void shouldThrowPitErrorWhenNoJunit5OnClassPath() {
-        final PitHelpError error = expectThrows(
+        final PitHelpError error = assertThrows(
                 PitHelpError.class,
-                () -> factory.createTestFrameworkConfiguration(groupConfig, source)
+                () -> factory.createTestFrameworkConfiguration(groupConfig, source, Collections.emptyList())
         );
 
         assertEquals(new PitHelpError(Help.NO_TEST_LIBRARY).getMessage(), error.getMessage());
@@ -85,8 +86,8 @@ class JUnit5TestPluginFactoryTest {
 
 
     private void putJUnit5OnClasspath() {
-        when(this.source.getBytes("org.junit.gen5.api.Test")).thenReturn(
-                this.realSource.getBytes("org.junit.gen5.api.Test"));
+        when(this.source.getBytes("org.junit.jupiter.api.Test")).thenReturn(
+                this.realSource.getBytes("org.junit.jupiter.api.Test"));
     }
 
 }

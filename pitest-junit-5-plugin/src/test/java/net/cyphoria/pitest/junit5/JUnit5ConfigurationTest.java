@@ -14,10 +14,10 @@
  */
 package net.cyphoria.pitest.junit5;
 
-import org.junit.gen5.api.BeforeAll;
-import org.junit.gen5.api.BeforeEach;
-import org.junit.gen5.api.Disabled;
-import org.junit.gen5.api.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.TestUnitFinder;
@@ -31,10 +31,10 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.junit.gen5.api.Assertions.assertEquals;
-import static org.junit.gen5.api.Assertions.assertFalse;
-import static org.junit.gen5.api.Assertions.assertTrue;
-import static org.junit.gen5.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @author Stefan Pennndorf
@@ -128,8 +128,8 @@ class JUnit5ConfigurationTest {
                 .collect(Collectors.toList());
 
         assertThat(testsNames, containsInAnyOrder(
-                "publicTestMethod",
-                "packagePrivateTestMethod"
+                "publicTestMethod()",
+                "packagePrivateTestMethod()"
         ));
     }
 
@@ -142,19 +142,18 @@ class JUnit5ConfigurationTest {
                 .collect(Collectors.toList());
 
         assertThat(testsNames, containsInAnyOrder(
-                "net.cyphoria.pitest.junit5.JUnit5ConfigurationTest$DummyTestClass.publicTestMethod",
-                "net.cyphoria.pitest.junit5.JUnit5ConfigurationTest$DummyTestClass.packagePrivateTestMethod"
+                "net.cyphoria.pitest.junit5.JUnit5ConfigurationTest$DummyTestClass.publicTestMethod()",
+                "net.cyphoria.pitest.junit5.JUnit5ConfigurationTest$DummyTestClass.packagePrivateTestMethod()"
         ));
     }
 
 
     @Test
-    @Disabled
     void findsSingleTestUnitWithBeforeAll() {
-        assertThat(testUnitFinder.findTestUnits(TestClazzWithStaticSetup.class), hasSize(1));
+        assertThat(testUnitFinder.findTestUnits(TestClazzWithStaticSetup.class), hasSize(2));
 
         assertEquals(
-                1,
+                2,
                 configuration.testUnitFinder().findTestUnits(TestClazzWithStaticSetup.class).size());
     }
 
