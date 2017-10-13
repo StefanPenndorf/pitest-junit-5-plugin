@@ -14,7 +14,7 @@
  */
 package net.cyphoria.pitest;
 
-import org.junit.gen5.api.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Stefan Pennndorf

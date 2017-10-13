@@ -14,11 +14,12 @@
  */
 package net.cyphoria.pitest.junit5;
 
-import org.junit.gen5.launcher.Launcher;
-import org.junit.gen5.launcher.TestDiscoveryRequest;
+import org.junit.platform.launcher.Launcher;
+import org.junit.platform.launcher.LauncherDiscoveryRequest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -26,19 +27,17 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @author Stefan Pennndorf
  */
 public class ForeignClassLoaderCustomLauncherExecutor implements Callable<List<String>> {
-    private final TestDiscoveryRequest discoveryRequest;
+    private final LauncherDiscoveryRequest discoveryRequest;
     private final Launcher launcher;
 
-    public ForeignClassLoaderCustomLauncherExecutor(Launcher launcher, TestDiscoveryRequest discoveryRequest) {
-        super();
+    ForeignClassLoaderCustomLauncherExecutor(Launcher launcher, LauncherDiscoveryRequest discoveryRequest) {
         this.launcher = launcher;
         this.discoveryRequest = discoveryRequest;
-
     }
 
     @Override
-    public List<String> call() throws Exception {
-        ConcurrentLinkedQueue<String> queue = new ConcurrentLinkedQueue<>();
+    public List<String> call() {
+        Queue<String> queue = new ConcurrentLinkedQueue<>();
         launcher.registerTestExecutionListeners(new ForeignClassLoaderTestExecutionListener(queue));
         launcher.execute(discoveryRequest);
         return new ArrayList<>(queue);

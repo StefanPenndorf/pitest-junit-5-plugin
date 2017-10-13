@@ -17,10 +17,10 @@ package net.cyphoria.pitest.junit5;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
 import org.apache.maven.it.util.ResourceExtractor;
-import org.junit.gen5.api.AfterEach;
-import org.junit.gen5.api.BeforeEach;
-import org.junit.gen5.api.Test;
-import org.junit.gen5.api.TestInfo;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

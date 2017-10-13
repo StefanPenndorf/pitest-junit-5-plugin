@@ -76,8 +76,8 @@
         <java.version>1.8</java.version>
 
         <pitest.version>1.1.9</pitest.version>
-        <junit.version>5.0.0-ALPHA</junit.version>
-        <junit.surefire.version>5.0.0-ALPHA</junit.surefire.version>
+        <junit.platform.version>1.0.1</junit.platform.version>
+        <junit.version>5.0.1</junit.version>
     </properties>
 
     <build>
@@ -96,9 +96,9 @@
                     <version>2.19</version>
                     <dependencies>
                         <dependency>
-                            <groupId>org.junit</groupId>
-                            <artifactId>surefire-junit5</artifactId>
-                            <version>${junit.surefire.version}</version>
+                            <groupId>org.junit.platform</groupId>
+                            <artifactId>junit-platform-surefire-provider</artifactId>
+                            <version>${junit.platform.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -107,9 +107,9 @@
                     <version>2.19</version>
                     <dependencies>
                         <dependency>
-                            <groupId>org.junit</groupId>
-                            <artifactId>surefire-junit5</artifactId>
-                            <version>${junit.surefire.version}</version>
+                            <groupId>org.junit.platform</groupId>
+                            <artifactId>junit-platform-surefire-provider</artifactId>
+                            <version>${junit.platform.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -132,19 +132,33 @@
                 <version>${pitest.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.junit</groupId>
-                <artifactId>junit-launcher</artifactId>
-                <version>${junit.version}</version>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-launcher</artifactId>
+                <version>${junit.platform.version}</version>
+                <scope>compile</scope>
             </dependency>
             <dependency>
-                <groupId>org.junit</groupId>
-                <artifactId>junit-engine-api</artifactId>
-                <version>${junit.version}</version>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-runner</artifactId>
+                <version>${junit.platform.version}</version>
+                <scope>compile</scope>
             </dependency>
             <dependency>
-                <groupId>org.junit</groupId>
-                <artifactId>junit5-api</artifactId>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
                 <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apiguardian</groupId>
+                <artifactId>apiguardian-api</artifactId>
+                <version>1.0.0</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -172,6 +186,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>

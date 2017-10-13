@@ -14,9 +14,9 @@
  */
 package net.cyphoria.pitest.junit5;
 
-import org.junit.gen5.engine.TestExecutionResult;
-import org.junit.gen5.launcher.TestExecutionListener;
-import org.junit.gen5.launcher.TestIdentifier;
+import org.junit.platform.engine.TestExecutionResult;
+import org.junit.platform.launcher.TestExecutionListener;
+import org.junit.platform.launcher.TestIdentifier;
 import org.pitest.functional.SideEffect2;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.ResultCollector;
@@ -26,16 +26,16 @@ import org.pitest.testapi.foreignclassloader.Start;
 import org.pitest.testapi.foreignclassloader.Success;
 import org.pitest.util.IsolationUtils;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.Queue;
 
 /**
  * @author Stefan Pennndorf
  */
 public class ForeignClassLoaderTestExecutionListener implements TestExecutionListener {
 
-    private final ConcurrentLinkedQueue<String> events;
+    private final Queue<String> events;
 
-    public ForeignClassLoaderTestExecutionListener(ConcurrentLinkedQueue<String> queue) {
+    ForeignClassLoaderTestExecutionListener(Queue<String> queue) {
         this.events = queue;
     }
 
@@ -51,15 +51,14 @@ public class ForeignClassLoaderTestExecutionListener implements TestExecutionLis
 
     @Override
     public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
-        if(testExecutionResult.getStatus() == TestExecutionResult.Status.SUCCESSFUL) {
+        if (testExecutionResult.getStatus() == TestExecutionResult.Status.SUCCESSFUL) {
             storeAsString(new Success());
         } else {
             storeAsString(new Fail(testExecutionResult.getThrowable().orElse(null)));
         }
     }
 
-    private void storeAsString(
-            final SideEffect2<ResultCollector, Description> result) {
+    private void storeAsString(final SideEffect2<ResultCollector, Description> result) {
         this.events.add(IsolationUtils.toXml(result));
     }
 
