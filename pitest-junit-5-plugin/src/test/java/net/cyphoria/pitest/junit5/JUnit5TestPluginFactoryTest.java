@@ -28,6 +28,8 @@ import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestUnitFinder;
 import org.pitest.util.IsolationUtils;
 
+import java.util.Collections;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -66,7 +68,7 @@ class JUnit5TestPluginFactoryTest {
     void shouldCreateAConfigurationThatFindsJUnitTestsWhenJUnit5OnClassPath() {
         putJUnit5OnClasspath();
 
-        final TestUnitFinder finder = factory.createTestFrameworkConfiguration(groupConfig, source).testUnitFinder();
+        final TestUnitFinder finder = factory.createTestFrameworkConfiguration(groupConfig, source, Collections.emptyList()).testUnitFinder();
 
         assertFalse(finder.findTestUnits(JUnit5TestPluginFactoryTest.class).isEmpty());
     }
@@ -76,7 +78,7 @@ class JUnit5TestPluginFactoryTest {
     void shouldThrowPitErrorWhenNoJunit5OnClassPath() {
         final PitHelpError error = assertThrows(
                 PitHelpError.class,
-                () -> factory.createTestFrameworkConfiguration(groupConfig, source)
+                () -> factory.createTestFrameworkConfiguration(groupConfig, source, Collections.emptyList())
         );
 
         assertEquals(new PitHelpError(Help.NO_TEST_LIBRARY).getMessage(), error.getMessage());

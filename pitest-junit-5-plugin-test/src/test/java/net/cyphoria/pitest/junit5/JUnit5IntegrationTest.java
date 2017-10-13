@@ -34,7 +34,7 @@ import java.nio.file.Path;
  */
 class JUnit5IntegrationTest {
 
-    private static final String VERSION = "1.1.9";
+    private static final String VERSION = "1.2.4";
 
     private static Logger LOGGER = LoggerFactory.getLogger(JUnit5IntegrationTest.class);
 
